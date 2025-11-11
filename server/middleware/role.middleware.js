@@ -1,0 +1,34 @@
+const userModel = require("../model/user.model");
+
+const requireRole = (roles) => {
+  return async (req, res, next) => {
+    try {
+      const user = await userModel.findById(req.user.userId);
+
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      if (!roles.includes(user.role))  // [ 'admin', 'super_admin']
+        return res
+          .status(403)
+          .json({ message: "Access denied. Insufficient permissions" });
+
+      req.user.role = user.role;
+
+      next();
+    } catch (error) {
+      console.error("Role check error:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+};
+
+const requireAdmin = requireRole(["admin", "super_admin"]);
+const requireSuperAdmin = requireRole(["super_admin"]);
+const requireClient = requireRole(["client", "admin", "super_admin"]);
+
+module.exports = {
+  requireRole,
+  requireAdmin,
+  requireSuperAdmin,
+  requireClient,
+};
