@@ -23,6 +23,7 @@ interface ProductState {
     setCurrentSort: (currentSort: string) => void;
     setProducts: (products: Product[]) => void;
     toggleCategory: (category: string) => void;
+    setSelectedCategories: (categories: string[]) => void;
     applyFilters: () => void;
     searchProducts: (searchQuery: string) => Promise<void>;
     setSearchQuery: (searchQuery: string) => void;
@@ -44,7 +45,8 @@ export const useProductStore = create<ProductState>((set, get) => ({
     getProducts: async () => {
         try {
             const response = await productsApi.getProducts();
-            set({ products: response.data, allProducts: response.data, loading: false });
+            // Keep initial products empty; load all into allProducts
+            set({ products: [], allProducts: response.data, loading: false });
         } catch (error) {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
@@ -114,6 +116,13 @@ export const useProductStore = create<ProductState>((set, get) => ({
     setSortBy: (sortBy: string) => set({ sortBy }),
     setCurrentSort: (currentSort: string) => set({ currentSort }),
     setProducts: (products: Product[]) => set({ products }),
+    setSelectedCategories: (categories: string[]) => {
+        set({ selectedCategories: categories });
+        const { searchQuery } = get();
+        if (!searchQuery.trim()) {
+            get().applyFilters();
+        }
+    },
     // Toggle Category
     toggleCategory: (category: string) => {
         const { selectedCategories, searchQuery } = get();
@@ -132,7 +141,8 @@ export const useProductStore = create<ProductState>((set, get) => ({
     applyFilters: () => {
         const { allProducts, selectedCategories } = get();
         if (selectedCategories.length === 0) {
-            set({ products: allProducts });
+            // Default: show nothing until a category is selected
+            set({ products: [] });
         } else {
             const filtered = allProducts.filter((product) =>
                 selectedCategories.includes(product.category)

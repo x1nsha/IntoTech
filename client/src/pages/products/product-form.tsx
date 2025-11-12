@@ -34,7 +34,6 @@ export default function ProductForm() {
 
   const isEditMode = !!editingProduct;
 
-  // Reset form when editingProduct changes
   useEffect(() => {
     if (editingProduct) {
       reset({

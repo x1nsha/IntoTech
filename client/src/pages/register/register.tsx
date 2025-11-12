@@ -57,21 +57,21 @@ export default function Register() {
     return (
         <div className="min-h-screen flex items-center justify-center p-6">
             <div className="w-full max-w-md">
-                {/* Header */}
                 <div className="text-center mb-8">
-                    <Link to="/" className="inline-block font-space-age text-2xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
-                        IntoTech
-                    </Link>
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-purple-500 to-pink-600 mb-4 shadow-2xl shadow-purple-500/40">
                         <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
                         </svg>
                     </div>
+                </div>
+                <div className="text-center mb-8">
+                    <Link to="/" className="inline-block font-space-age text-2xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
+                        IntoTech
+                    </Link>
                     <h2 className="text-3xl font-bold text-white mb-2">Create your account</h2>
                     <p className="text-white/60">Join IntoTech and get started</p>
                 </div>
 
-                {/* Form Card */}
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
                     {error && (
                         <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
@@ -83,7 +83,6 @@ export default function Register() {
                     )}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                        {/* Username Field */}
                         <div>
                             <label htmlFor="username" className="block text-sm font-semibold text-white/90 mb-2">
                                 Username
@@ -113,7 +112,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* Email Field */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-semibold text-white/90 mb-2">
                                 Email Address
@@ -144,7 +142,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* Password Field */}
                         <div>
                             <label htmlFor="password" className="block text-sm font-semibold text-white/90 mb-2">
                                 Password
@@ -174,7 +171,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* Confirm Password Field */}
                         <div>
                             <label htmlFor="confirmPassword" className="block text-sm font-semibold text-white/90 mb-2">
                                 Confirm Password
@@ -204,7 +200,6 @@ export default function Register() {
                             )}
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -230,7 +225,6 @@ export default function Register() {
                     </form>
                 </div>
 
-                {/* Login Link */}
                 <p className="text-center mt-6 text-white/60">
                     Already have an account?{" "}
                     <Link to="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">

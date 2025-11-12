@@ -12,7 +12,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { register, handleSubmit } = useForm<ProfileSchema>({
+  const { register, handleSubmit, formState: { dirtyFields } } = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
   });
 
@@ -21,7 +21,21 @@ export default function Profile() {
     setLoading(true);
 
     try {
-      await updateUser(data);
+      const payload: { bio?: string; avatarUrl?: string; sosialLinks?: { twitter?: string; facebook?: string; instagram?: string } } = {};
+
+      if (dirtyFields?.bio) {
+        payload.bio = data.bio ?? "";
+      }
+      if (dirtyFields?.avatarUrl) {
+        payload.avatarUrl = (data as any).avatarUrl ?? "";
+      }
+      const links: { twitter?: string; facebook?: string; instagram?: string } = {};
+      if (dirtyFields?.sosialLinks?.twitter) links.twitter = data.sosialLinks?.twitter ?? "";
+      if (dirtyFields?.sosialLinks?.facebook) links.facebook = data.sosialLinks?.facebook ?? "";
+      if (dirtyFields?.sosialLinks?.instagram) links.instagram = data.sosialLinks?.instagram ?? "";
+      if (Object.keys(links).length > 0) payload.sosialLinks = links;
+
+      await updateUser(payload);
       setIsEditing(false);
     } catch (err: unknown) {
       const errorMessage =
@@ -60,11 +74,19 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen p-6 md:p-8 max-w-4xl mx-auto">
-      {/* Header */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-4 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
+
       <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 md:p-8 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-4">
-            {/* Avatar */}
             <div className="shrink-0">
               {user?.avatarUrl ? (
                 <img 
@@ -78,21 +100,19 @@ export default function Profile() {
                 </div>
               )}
             </div>
-            
-            {/* User Info */}
+
             <div>
               <h2 className="text-3xl font-bold text-white mb-1">{user?.username}'s Profile</h2>
               <p className="text-white/60">{user?.email}</p>
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3">
             {!isEditing ? (
               <>
                 <button 
                   onClick={() => setIsEditing(true)} 
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -101,7 +121,7 @@ export default function Profile() {
                 </button>
                 <button 
                   onClick={handleLogout} 
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium rounded-lg transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium rounded-lg transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
@@ -112,7 +132,7 @@ export default function Profile() {
             ) : (
               <button 
                 onClick={() => setIsEditing(false)} 
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium rounded-lg transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium rounded-lg transition-all cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -124,7 +144,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
           <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -134,7 +153,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Bio Section */}
       {user?.bio && !isEditing && (
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 mb-6">
           <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
@@ -147,7 +165,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Edit Form */}
       {isEditing ? (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 md:p-8 mb-6 space-y-5">
           <h3 className="text-xl font-bold text-white mb-4">Edit Profile</h3>
@@ -211,7 +228,7 @@ export default function Profile() {
           <button 
             type="submit" 
             disabled={loading} 
-            className="w-full py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-green-500/30 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-green-500/30 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
           >
             {loading ? (
               <>
@@ -232,7 +249,6 @@ export default function Profile() {
           </button>
         </form>
       ) : (
-        /* Social Links Display */
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 mb-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <svg className="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
@@ -298,7 +314,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Danger Zone */}
       <div className="bg-red-500/5 backdrop-blur-lg rounded-2xl border border-red-500/20 p-6 md:p-8">
         <div className="flex items-start gap-3 mb-4">
           <svg className="w-6 h-6 text-red-400 shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
@@ -312,7 +327,7 @@ export default function Profile() {
             <button
               onClick={() => setShowDeleteConfirm(true)}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-medium rounded-lg transition-colors disabled:cursor-not-allowed cursor-pointer"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -323,7 +338,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-red-500/30 shadow-2xl max-w-md w-full p-6">
@@ -345,14 +359,14 @@ export default function Profile() {
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white font-medium rounded-lg transition-all border border-white/20 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white font-medium rounded-lg transition-all border border-white/20 disabled:cursor-not-allowed cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteProfile}
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-semibold rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-semibold rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>

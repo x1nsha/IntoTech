@@ -2,18 +2,50 @@ import { Button } from "@/components/ui/button";
 import { useProductStore } from "@/store/product.store";
 import { X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ProductSidebar() {
-  const { toggleCategory, selectedCategories, searchQuery, setSearchQuery, clearSearch, searchProducts, products, applyFilters } = useProductStore();
+  const { toggleCategory, selectedCategories, setSelectedCategories, searchQuery, setSearchQuery, clearSearch, searchProducts, products, applyFilters, allProducts } = useProductStore();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const category = params.get("category");
+    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    if (category && allowed.includes(category)) {
+      if (selectedCategories.length !== 1 || selectedCategories[0] !== category) {
+        setSelectedCategories([category]);
+      }
+    } else {
+      if (selectedCategories.length !== 0) {
+        setSelectedCategories([]);
+      }
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    if (selectedCategories.length > 0) {
+      applyFilters();
+    }
+  }, [allProducts]);
   
   const handleCategoryChange = async (category: string) => {
     toggleCategory(category);
-    
-    // If there's an active search, re-run search with new categories
+
+    const first = selectedCategories.includes(category)
+      ? selectedCategories.filter((c) => c !== category)[0]
+      : [...selectedCategories, category][0];
+    const params = new URLSearchParams(location.search);
+    if (first) {
+      params.set("category", first);
+    } else {
+      params.delete("category");
+    }
+    navigate({ pathname: "/products", search: params.toString() }, { replace: true });
+
     if (searchQuery.trim()) {
       await searchProducts(searchQuery);
     }
@@ -27,7 +59,6 @@ export default function ProductSidebar() {
       await searchProducts(value);
       setShowDropdown(true);
     } else {
-      // When cleared (including backspace), reset and apply category filters
       setSearchQuery("");
       setShowDropdown(false);
       clearSearch();
@@ -45,15 +76,6 @@ export default function ProductSidebar() {
     navigate(`/products/${productId}`);
   };
 
-  const handleApplyFilters = async () => {
-    if (searchQuery.trim()) {
-      await searchProducts(searchQuery);
-    } else {
-      applyFilters();
-    }
-  };
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -161,11 +183,6 @@ export default function ProductSidebar() {
             ))}
           </div>
         </div>
-
-        {/* Apply Filters Button */}
-        <Button onClick={handleApplyFilters} className="w-full py-3 bg-linear-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all">
-          Apply Filters
-        </Button>
       </div>
     </aside>
   );

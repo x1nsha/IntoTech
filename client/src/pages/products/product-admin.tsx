@@ -9,8 +9,7 @@ export default function ProductAdmin() {
   const { products, loading, getProducts } = useProductStore();
   const { openModal } = useModalStore();
   const { user } = useAuthStore();
-  
-  // Check if user is admin or super admin
+
   const canModifyProducts = user?.role === "admin" || user?.role === "super_admin";
 
   useEffect(() => {
@@ -20,7 +19,6 @@ export default function ProductAdmin() {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900/20 to-gray-900">
       <div className="container mx-auto px-4 py-12">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
@@ -30,8 +28,7 @@ export default function ProductAdmin() {
               Create, view, and manage your product inventory
             </p>
           </div>
-          
-          {/* Add Product Button - Only visible for admin and super_admin */}
+
           {canModifyProducts && (
             <button
               onClick={openModal}
@@ -53,7 +50,6 @@ export default function ProductAdmin() {
           )}
         </div>
 
-        {/* Stats Card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
             <div className="flex items-center gap-4">
@@ -101,7 +97,6 @@ export default function ProductAdmin() {
           </div>
         </div>
 
-        {/* Products Grid */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
             <span className="w-1 h-8 bg-linear-to-b from-indigo-500 to-purple-600 rounded-full"></span>
@@ -152,7 +147,6 @@ export default function ProductAdmin() {
         </div>
       </div>
 
-      {/* Product Form Modal */}
       <ProductForm />
     </div>
   );

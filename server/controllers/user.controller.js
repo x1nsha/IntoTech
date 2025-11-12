@@ -19,14 +19,40 @@ const getUserHandler = async (req, res) => {
 
 const patchUserHandler = async (req, res) => {
   try {
-    const { bio, avatarUrl, sosialLinks } = req.body;
+    const { bio, avatarUrl, sosialLinks } = req.body || {};
+
+    // Build update object only with provided, non-empty values
+    const update = {};
+    if (typeof bio !== "undefined") {
+      if (bio === "") {
+        // allow clearing bio explicitly
+        update.bio = "";
+      } else {
+        update.bio = bio;
+      }
+    }
+    if (typeof avatarUrl !== "undefined") {
+      if (avatarUrl === "") {
+        update.avatarUrl = "";
+      } else {
+        update.avatarUrl = avatarUrl;
+      }
+    }
+    if (sosialLinks && typeof sosialLinks === "object") {
+      const cleaned = {};
+      ["twitter", "facebook", "instagram"].forEach((key) => {
+        const val = sosialLinks[key];
+        if (typeof val !== "undefined") {
+          cleaned[key] = val; // allow empty string to clear
+        }
+      });
+      if (Object.keys(cleaned).length > 0) {
+        update.sosialLinks = cleaned;
+      }
+    }
 
     const user = await userModel
-      .findByIdAndUpdate(
-        req.user.userId,
-        { bio, avatarUrl, sosialLinks },
-        { new: true }
-      )
+      .findByIdAndUpdate(req.user.userId, update, { new: true })
       .select("-password");
 
     res.json({ data: user });

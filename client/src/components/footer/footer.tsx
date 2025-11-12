@@ -5,7 +5,6 @@ export default function Footer() {
         <footer className="bg-black/70 backdrop-blur border-t border-white/10 text-white">
             <div className="container mx-auto px-6 py-14">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                    {/* Brand */}
                     <div>
                         <Link to="/" className="inline-block font-space-age text-2xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-4">
                             IntoTech
@@ -15,30 +14,26 @@ export default function Footer() {
                         </p>
                     </div>
 
-                    {/* Shop */}
                     <div>
                         <h3 className="text-sm uppercase tracking-wider text-white/60 mb-4">Shop</h3>
                         <ul className="space-y-3 text-white/80">
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Keyboards</Link></li>
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Mice</Link></li>
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Headphones</Link></li>
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Monitors</Link></li>
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Speakers</Link></li>
+                            <li><Link to="/products?category=keyboards" className="hover:text-indigo-300 transition-colors">Keyboards</Link></li>
+                            <li><Link to="/products?category=mice" className="hover:text-indigo-300 transition-colors">Mice</Link></li>
+                            <li><Link to="/products?category=headphones" className="hover:text-indigo-300 transition-colors">Headphones</Link></li>
+                            <li><Link to="/products?category=monitors" className="hover:text-indigo-300 transition-colors">Monitors</Link></li>
+                            <li><Link to="/products?category=speakers" className="hover:text-indigo-300 transition-colors">Speakers</Link></li>
                         </ul>
                     </div>
 
-                    {/* Company */}
                     <div>
                         <h3 className="text-sm uppercase tracking-wider text-white/60 mb-4">Company</h3>
                         <ul className="space-y-3 text-white/80">
-                            <li><Link to="/brand" className="hover:text-indigo-300 transition-colors">About</Link></li>
-                            <li><Link to="/products" className="hover:text-indigo-300 transition-colors">Shop</Link></li>
+                            <li><Link to="/brand#about" className="hover:text-indigo-300 transition-colors">About</Link></li>
                             <li><Link to="/auth/login" className="hover:text-indigo-300 transition-colors">Login</Link></li>
                             <li><Link to="/auth/register" className="hover:text-indigo-300 transition-colors">Create account</Link></li>
                         </ul>
                     </div>
 
-                    {/* Newsletter */}
                     <div>
                         <h3 className="text-sm uppercase tracking-wider text-white/60 mb-4">Stay in the loop</h3>
                         <p className="text-white/70 mb-4">Get product drops and deals directly to your inbox.</p>
@@ -48,7 +43,7 @@ export default function Footer() {
                                 placeholder="you@example.com"
                                 className="flex-1 px-4 py-3 rounded-lg bg-white/5 border border-white/10 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             />
-                            <button type="button" className="px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors">
+                            <button type="button" className="px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors cursor-pointer">
                                 Subscribe
                             </button>
                         </form>
@@ -56,7 +51,6 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* Bottom Bar */}
             <div className="border-t border-white/10">
                 <div className="container mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-white/60 text-sm">
                     <p>© {new Date().getFullYear()} IntoTech. All rights reserved.</p>

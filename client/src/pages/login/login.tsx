@@ -44,21 +44,21 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center p-6">
             <div className="w-full max-w-md">
-                {/* Header */}
                 <div className="text-center mb-8">
-                    <Link to="/" className="inline-block font-space-age text-2xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
-                        IntoTech
-                    </Link>
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 mb-4 shadow-2xl shadow-indigo-500/40">
                         <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                     </div>
+                </div>
+                <div className="text-center mb-8">
+                    <Link to="/" className="inline-block font-space-age text-4xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
+                        IntoTech
+                    </Link>
                     <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
                     <p className="text-white/60">Sign in to continue to IntoTech</p>
                 </div>
 
-                {/* Form Card */}
                 <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
                     {error && (
                         <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
@@ -70,7 +70,6 @@ export default function Login() {
                     )}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        {/* Email Field */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-semibold text-white/90 mb-2">
                                 Email Address
@@ -101,7 +100,6 @@ export default function Login() {
                             )}
                         </div>
 
-                        {/* Password Field */}
                         <div>
                             <label htmlFor="password" className="block text-sm font-semibold text-white/90 mb-2">
                                 Password
@@ -131,7 +129,6 @@ export default function Login() {
                             )}
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -157,7 +154,6 @@ export default function Login() {
                     </form>
                 </div>
 
-                {/* Register Link */}
                 <p className="text-center mt-6 text-white/60">
                     Don't have an account?{" "}
                     <Link to="/auth/register" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">

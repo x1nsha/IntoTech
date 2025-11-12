@@ -1,5 +1,5 @@
 import { useProductStore } from "@/store/product.store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "./product-card";
 import { useModalStore } from "@/store/modal.store";
 import ProductForm from "./product-form";
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "react-router-dom";
 
 export default function Products() {
   const {
@@ -24,9 +25,27 @@ export default function Products() {
   } = useProductStore();
   const { openModal } = useModalStore();
 
+  const location = useLocation();
+  const [showScrollUp, setShowScrollUp] = useState(false);
+
   useEffect(() => {
     getProducts();
   }, [getProducts]);
+
+  // Scroll to top when arriving to this page or when search/hash changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.search, location.hash]);
+
+  // Show scroll-up button based on scroll position
+  useEffect(() => {
+    const onScroll = () => setShowScrollUp(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const handleOpenModal = () => {
     openModal();
@@ -130,6 +149,18 @@ export default function Products() {
       </div>
 
       <ProductForm />
+
+      {showScrollUp && (
+        <button
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+          className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 text-white shadow-2xl shadow-indigo-500/30 border border-white/10 hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 hover:-translate-y-1"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
