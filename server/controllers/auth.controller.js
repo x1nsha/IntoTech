@@ -2,13 +2,15 @@ const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const postRegisterHandler = async (req, res) => {
-  try {
+const postRegisterHandler = async (req, res) =>
+{
+  try
+  {
     const { username, password, email } = req.body;
-
-    // Check if user already exists
     const existingUser = await UserModel.findOne({ email });
-    if (existingUser) {
+
+    if (existingUser)
+    {
       return res.status(400).json({ message: "User already exists" });
     }
 
@@ -20,19 +22,22 @@ const postRegisterHandler = async (req, res) => {
       email,
     });
     await newUser.save();
-    console.log(
-      `User register ${username}, hashed password: ${hashedPassword}`
-    );
+
+    console.log(`User register ${username}, hashed password: ${hashedPassword}`);
 
     res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
+  }
+  catch (error)
+  {
     console.error("Registration error:", error);
     res.status(500).json({ message: "Registration failed" });
   }
 };
 
-const postLoginHandler = async (req, res) => {
-  try {
+const postLoginHandler = async (req, res) =>
+{
+  try
+  {
     const { email, password } = req.body;
 
     const user = await UserModel.findOne({ email });
@@ -44,9 +49,7 @@ const postLoginHandler = async (req, res) => {
     if (!isPasswordValid)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {expiresIn: "1h",});
 
     res.json({
       token,
@@ -57,16 +60,21 @@ const postLoginHandler = async (req, res) => {
         role: user.role,
       },
     });
-  } catch (error) {
+  }
+  catch (error)
+  {
     console.error("Login error:", error);
     res.status(500).json({ message: "Login failed" });
   }
 };
 
-const initializeSuperAdmin = async () => {
-  try {
+const initializeSuperAdmin = async () =>
+{
+  try
+  {
     const existingSuperAdmin = await UserModel.findOne({ role: "super_admin" });
-    if (!existingSuperAdmin) {
+    if (!existingSuperAdmin)
+    {
       const superAdminData = {
         username: "superadmin",
         email: "superadmin@gmail.com",

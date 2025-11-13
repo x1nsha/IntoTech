@@ -1,20 +1,18 @@
 import { useProductStore } from "@/store/product.store";
 import { useEffect, useState } from "react";
+import type { Product } from "@/types/product.types";
 import ProductCard from "./product-card";
 import { useModalStore } from "@/store/modal.store";
 import ProductForm from "./product-form";
+import ProductDetailsModal from "./product-details-modal";
 import PageHeader from "@/components/ui/page-header";
 import ProductSidebar from "./product-sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function Products() {
+export default function Products()
+{
   const {
     products,
     getProducts,
@@ -26,19 +24,43 @@ export default function Products() {
   const { openModal } = useModalStore();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [showScrollUp, setShowScrollUp] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     getProducts();
   }, [getProducts]);
 
-  // Scroll to top when arriving to this page or when search/hash changes
-  useEffect(() => {
+  useEffect(() =>
+  {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.search, location.hash]);
 
-  // Show scroll-up button based on scroll position
-  useEffect(() => {
+  useEffect(() =>
+  {
+    const params = new URLSearchParams(location.search);
+    if (params.get("open") === "add")
+    {
+      openModal();
+      params.delete("open");
+      navigate({ pathname: "/products", search: params.toString() }, { replace: true });
+    }
+  }, [location.search, openModal, navigate]);
+
+  useEffect(() =>
+  {
+    const onKey = (e: KeyboardEvent) =>
+    {
+      if (e.key === "Escape") setSelectedProduct(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() =>
+  {
     const onScroll = () => setShowScrollUp(window.scrollY > 400);
     onScroll();
     window.addEventListener("scroll", onScroll);
@@ -47,11 +69,13 @@ export default function Products() {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
-  const handleOpenModal = () => {
+  const handleOpenModal = () =>
+  {
     openModal();
   };
 
-  const handleSortProducts = (sortBy: string) => {
+  const handleSortProducts = (sortBy: string) =>
+  {
     sortProducts(sortBy);
     setSortBy(sortBy);
     setCurrentSort(sortBy);
@@ -115,7 +139,7 @@ export default function Products() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {products.map((product) => (
                   <div key={product._id} className="animate-in fade-in-50">
-                    <ProductCard product={product} />
+                    <ProductCard product={product} onClick={setSelectedProduct} />
                   </div>
                 ))}
               </div>
@@ -149,6 +173,10 @@ export default function Products() {
       </div>
 
       <ProductForm />
+
+      {selectedProduct && (
+        <ProductDetailsModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      )}
 
       {showScrollUp && (
         <button

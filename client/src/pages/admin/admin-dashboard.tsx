@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import useAuthStore from '../../store/auth.store';
 import { isAdmin, isSuperAdmin, getRoleDisplayName } from '../../utils/auth.utils';
 
-export default function AdminDashboard() {
+export default function AdminDashboard()
+{
   const { user } = useAuthStore();
 
-  if (!user || !isAdmin(user)) {
+  if (!user || !isAdmin(user))
+  {
     return (
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="bg-red-500/10 border-2 border-red-500/30 rounded-2xl p-8 max-w-md text-center backdrop-blur-sm">
@@ -23,7 +25,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen p-6 md:p-8 max-w-7xl mx-auto">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
           Admin Dashboard
@@ -36,9 +37,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* User Management - Super Admin Only */}
         {isSuperAdmin(user) && (
           <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-500/30">
             <div className="p-6">
@@ -69,7 +68,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Product Management - Admin and Super Admin */}
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-500/20 hover:border-blue-500/30">
           <div className="p-6">
             <div className="flex items-center gap-4 mb-4">
@@ -98,7 +96,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* System Stats */}
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-green-500/20 hover:border-green-500/30">
           <div className="p-6">
             <div className="flex items-center gap-4 mb-4">
@@ -125,7 +122,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Permissions Section */}
       <div className="bg-indigo-500/10 backdrop-blur-lg border border-indigo-500/20 rounded-2xl p-6">
         <h3 className="text-xl font-bold text-indigo-400 mb-4 flex items-center gap-2">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -183,5 +179,3 @@ export default function AdminDashboard() {
     </div>
   );
 };
-
-

@@ -1,13 +1,17 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-export default function Brand() {
+export default function Brand()
+{
     const location = useLocation();
 
-    useEffect(() => {
-        if (location.hash === "#about") {
+    useEffect(() =>
+    {
+        if (location.hash === "#about")
+        {
             const el = document.getElementById("about");
-            if (el) {
+            if (el)
+            {
                 el.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         }
@@ -15,7 +19,6 @@ export default function Brand() {
 
     return (
         <div className="min-h-screen pt-24 bg-linear-to-b from-gray-950 via-gray-900 to-black">
-            {/* Анимированный фон */}
             <div className="absolute inset-0">
                 <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -159,7 +162,6 @@ export default function Brand() {
                     </section>
                 </div>
 
-                {/* Closing */}
                 <div className="mt-16 text-center text-white/80 relative animate-fade-in">
                     <p className="mb-4 text-xl">
                         We are the brand that lets you feel the technology.

@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { registerSchema, type RegisterSchema } from "./register.schema";
 
-export default function Register() {
+export default function Register()
+{
     const {
         register,
         handleSubmit,
@@ -27,16 +28,19 @@ export default function Register() {
         setError("");
         setLoading(true);
 
-        if (data.password !== data.confirmPassword) {
+        if (data.password !== data.confirmPassword)
+        {
             setError("Passwords do not match");
             setLoading(false);
             return;
         }
 
-        try {
+        try
+        {
             await registerUser(data.username, data.email, data.password);
             navigate("/auth/login");
-        } catch (err: unknown) {
+        }
+        catch (err: unknown) {
             console.error("Registration error:", err);
             let errorMessage = "Registration failed";
 
@@ -57,7 +61,7 @@ export default function Register() {
     return (
         <div className="min-h-screen flex items-center justify-center p-6">
             <div className="w-full max-w-md">
-                <div className="text-center mb-8">
+                <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-purple-500 to-pink-600 mb-4 shadow-2xl shadow-purple-500/40">
                         <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
@@ -65,7 +69,7 @@ export default function Register() {
                     </div>
                 </div>
                 <div className="text-center mb-8">
-                    <Link to="/" className="inline-block font-space-age text-2xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
+                    <Link to="/" className="inline-block font-space-age text-4xl bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-wide mb-3">
                         IntoTech
                     </Link>
                     <h2 className="text-3xl font-bold text-white mb-2">Create your account</h2>
@@ -203,7 +207,7 @@ export default function Register() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             {loading ? (
                                 <>

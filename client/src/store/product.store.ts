@@ -2,7 +2,8 @@ import { create } from "zustand";
 import type { Product } from "@/types/product.types";
 import productsApi from "@/service/api.products";
 
-interface ProductState {
+interface ProductState
+{
     products: Product[];
     allProducts: Product[];
     product: Product | null;
@@ -41,132 +42,163 @@ export const useProductStore = create<ProductState>((set, get) => ({
     selectedCategories: [],
     searchQuery: "",
     isSearching: false,
-    // Get Products
-    getProducts: async () => {
-        try {
+
+    getProducts: async () =>
+    {
+        try
+        {
             const response = await productsApi.getProducts();
-            // Keep initial products empty; load all into allProducts
-            set({ products: [], allProducts: response.data, loading: false });
-        } catch (error) {
+            set({ products: response.data, allProducts: response.data, loading: false });
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
-    getProductById: async (id: string) => {
-        try {
+    getProductById: async (id: string) =>
+    {
+        try
+        {
             const response = await productsApi.getProductById(id);
             set({ product: response.data, loading: false });
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
-    // Create Product
-    createProduct: async (product: Product) => {
-        try {
+    createProduct: async (product: Product) =>
+    {
+        try
+        {
             const response = await productsApi.createProduct(product);
             set((state) => ({ products: [...state.products, response.data] }));
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
-    // Update Product
-    updateProduct: async (id: string, product: Product) => {
-        try {
+    updateProduct: async (id: string, product: Product) =>
+    {
+        try
+        {
             const response = await productsApi.updateProduct(id, product);
             set((state) => ({ products: state.products.map((p) => p._id === id ? response.data : p) }));
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
-    // Delete Product
-    deleteProduct: async (id: string) => {
-        try {
+    deleteProduct: async (id: string) =>
+    {
+        try
+        {
             await productsApi.deleteProduct(id);
             set((state) => ({ products: state.products.filter((p) => p._id !== id) }));
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
-    // Sort Products
-    sortProducts: async (sortBy: string) => {
-        try {
+    sortProducts: async (sortBy: string) =>
+    {
+        try
+        {
             const response = await productsApi.sortProducts(sortBy);
             set({ products: response.data, allProducts: response.data, loading: false });
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
     setSortBy: (sortBy: string) => set({ sortBy }),
     setCurrentSort: (currentSort: string) => set({ currentSort }),
     setProducts: (products: Product[]) => set({ products }),
-    setSelectedCategories: (categories: string[]) => {
-        set({ selectedCategories: categories });
-        const { searchQuery } = get();
-        if (!searchQuery.trim()) {
+    setSelectedCategories: (categories: string[]) => {set({ selectedCategories: categories });const { searchQuery } = get();
+        if (!searchQuery.trim())
+        {
             get().applyFilters();
         }
     },
-    // Toggle Category
-    toggleCategory: (category: string) => {
+    toggleCategory: (category: string) =>
+    {
         const { selectedCategories, searchQuery } = get();
-        const newCategories = selectedCategories.includes(category)
-            ? selectedCategories.filter((c) => c !== category)
-            : [...selectedCategories, category];
-        set({ selectedCategories: newCategories });
-        
-        // Only apply filters if not searching
-        // If searching, the search will be re-run with new categories
-        if (!searchQuery.trim()) {
+        const newCategories = selectedCategories.includes(category) ? selectedCategories.filter((c) => c !== category) : [...selectedCategories, category];set({ selectedCategories: newCategories });
+
+        if (!searchQuery.trim())
+        {
             get().applyFilters();
         }
     },
-    // Apply Filters
-    applyFilters: () => {
+    applyFilters: () =>
+    {
         const { allProducts, selectedCategories } = get();
-        if (selectedCategories.length === 0) {
-            // Default: show nothing until a category is selected
-            set({ products: [] });
-        } else {
-            const filtered = allProducts.filter((product) =>
-                selectedCategories.includes(product.category)
-            );
+        if (selectedCategories.length === 0)
+        {
+            set({ products: allProducts });
+        }
+        else
+        {
+            const filtered = allProducts.filter((product) => selectedCategories.includes(product.category));
             set({ products: filtered });
         }
     },
-    // Search Products
-    searchProducts: async (searchQuery: string) => {
-        try {
+    searchProducts: async (searchQuery: string) =>
+    {
+        try
+        {
             const { selectedCategories } = get();
             const response = await productsApi.searchProducts(searchQuery, selectedCategories);
             set({ products: response.data, loading: false });
-        } catch (error) {
+        }
+        catch (error)
+        {
             set({ loading: false, error: error instanceof Error ? error.message : "An unknown error occurred" });
             throw error;
-        } finally {
+        }
+        finally
+        {
             set({ loading: false });
         }
     },
     setSearchQuery: (searchQuery: string) => set({ searchQuery }),
-    clearSearch: () => {
+    clearSearch: () =>
+    {
         set({ searchQuery: "" });
-        // Re-apply category filters (shows all products if no categories selected)
         get().applyFilters();
     },
 }))

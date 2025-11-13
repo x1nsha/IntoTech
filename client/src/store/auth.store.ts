@@ -2,7 +2,8 @@ import { create } from "zustand";
 import type { SocialLinks, User, UserRole } from "../types/auth.types";
 import { authApi, userApi } from "../service/api.auth";
 
-interface AuthState {
+interface AuthState
+{
     isAuthenticated: boolean;
     user: User | null;
     users: User[];

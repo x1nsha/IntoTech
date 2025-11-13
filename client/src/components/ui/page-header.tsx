@@ -1,9 +1,11 @@
-interface PageHeaderProps {
+interface PageHeaderProps
+{
   title: string;
   description: string;
 }
 
-export default function PageHeader({ title, description }: PageHeaderProps) {
+export default function PageHeader({ title, description }: PageHeaderProps)
+{
   return (
     <div className="bg-linear-to-br from-indigo-600 via-purple-600 to-purple-500 py-12 px-6 mt-32">
       <div className="max-w-7xl mx-auto">

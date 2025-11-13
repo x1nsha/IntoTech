@@ -1,4 +1,5 @@
-export default function Loading() {
+export default function Loading()
+{
     return (
       <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
         <svg
@@ -32,5 +33,4 @@ export default function Loading() {
         </svg>
       </div>
     );
-  }
-  
+}

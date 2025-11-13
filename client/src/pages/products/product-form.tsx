@@ -112,7 +112,6 @@ export default function ProductForm() {
           </div>
         </div>
 
-        {/* Content */}
         {(!isAuthenticated && !isEditMode) ? (
           <div className="p-8 text-center animate-in fade-in-50">
             <div className="mx-auto w-16 h-16 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4">
@@ -132,7 +131,7 @@ export default function ProductForm() {
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
-          {/* Product Name */}
+
           <div>
             <label htmlFor="name" className="block text-sm font-semibold text-white/90 mb-2">
               Product Name
@@ -154,7 +153,6 @@ export default function ProductForm() {
             )}
           </div>
 
-          {/* Description */}
           <div>
             <label htmlFor="description" className="block text-sm font-semibold text-white/90 mb-2">
               Description
@@ -176,7 +174,6 @@ export default function ProductForm() {
             )}
           </div>
 
-          {/* Category */}
           <div>
             <label htmlFor="category" className="block text-sm font-semibold text-white/90 mb-2">
               Category
@@ -213,7 +210,6 @@ export default function ProductForm() {
             )}
           </div>
 
-          {/* Price */}
           <div>
             <label htmlFor="price" className="block text-sm font-semibold text-white/90 mb-2">
               Price
@@ -242,7 +238,6 @@ export default function ProductForm() {
             )}
           </div>
 
-          {/* Image URL */}
           <div>
             <label htmlFor="image" className="block text-sm font-semibold text-white/90 mb-2">
               Image URL

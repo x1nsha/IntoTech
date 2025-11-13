@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-export default function Hero() {
+export default function Hero()
+{
   return (
     <div className="min-h-screen pt-24 bg-linear-to-b from-gray-950 via-gray-900 to-black">
       <div className="grid grid-cols-1 md:grid-cols-2">
@@ -14,9 +15,6 @@ export default function Hero() {
           <div className="flex gap-4">
             <Link to="/products" className="bg-indigo-600 hover:bg-indigo-500 rounded-md px-6 py-4 text-white cursor-pointer inline-flex items-center justify-center">
               Shop peripherals
-            </Link>
-            <Link to="/products" className="rounded-md px-6 py-4 border border-white/20 text-white hover:bg-white/10 transition-colors inline-flex items-center justify-center">
-              Browse all
             </Link>
           </div>
         </div>

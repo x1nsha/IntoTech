@@ -2,7 +2,8 @@ const Product = require("../model/product.model");
 
 const getProductsHandler = async (req, res) => {
   try {
-    const products = await Product.find();
+    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const products = await Product.find({ category: { $in: allowed } });
     res.json({ data: products });
   } catch (error) {
     console.error("Can't get products", error);
@@ -63,6 +64,10 @@ const getProductByIdHandler = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    if (!allowed.includes(product.category)) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     res.json({ data: product });
   } catch (error) {
     console.error("Can't get product by id", error);
@@ -95,7 +100,8 @@ const sortProductsHandler = async (req, res) => {
         sortQuery = { createdAt: -1 };
     }
 
-    const products = await Product.find().sort(sortQuery);
+    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const products = await Product.find({ category: { $in: allowed } }).sort(sortQuery);
     res.status(200).json({ data: products });
   } catch (error) {
     console.error("Can't sort products", error);
@@ -107,14 +113,15 @@ const searchProductsHandler = async (req, res) => {
   try {
     const { search, categories } = req.query;
     
-    // Build query object
-    let query = { name: { $regex: search, $options: "i" } };
+    // Build query object with allowed categories only
+    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    let query = { name: { $regex: search, $options: "i" }, category: { $in: allowed } };
     
-    // Add category filter if categories are provided
+    // Add category filter if categories are provided (still intersect with allowed)
     if (categories) {
       const categoryArray = categories.split(',').filter(cat => cat.trim());
       if (categoryArray.length > 0) {
-        query.category = { $in: categoryArray };
+        query.category = { $in: categoryArray.filter(c => allowed.includes(c)) };
       }
     }
     
@@ -126,6 +133,43 @@ const searchProductsHandler = async (req, res) => {
   }
 }
 
+// Permanently delete unwanted categories (e.g., watches/clocks)
+const purgeProductsHandler = async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    // Default categories to purge
+    const defaultToPurge = ["watches", "clocks"];
+
+    // Parse requested categories if provided
+    let categoriesToPurge = defaultToPurge;
+    if (category) {
+      categoriesToPurge = String(category)
+        .split(",")
+        .map((c) => c.trim().toLowerCase())
+        .filter(Boolean);
+    }
+
+    // Only allow purging of specific categories for safety
+    const allowedToPurge = ["watches", "clocks"];
+    const finalCategories = categoriesToPurge.filter((c) => allowedToPurge.includes(c));
+
+    if (finalCategories.length === 0) {
+      return res.status(400).json({ message: "No valid categories to purge" });
+    }
+
+    const result = await Product.deleteMany({ category: { $in: finalCategories } });
+
+    res.status(200).json({
+      message: "Purge completed",
+      deletedCount: result?.deletedCount || 0,
+      categories: finalCategories,
+    });
+  } catch (error) {
+    console.error("Can't purge products", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 module.exports = {
   getProductsHandler,
@@ -135,4 +179,5 @@ module.exports = {
   getProductByIdHandler,
   sortProductsHandler,
   searchProductsHandler,
+  purgeProductsHandler,
 };

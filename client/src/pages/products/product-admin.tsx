@@ -5,14 +5,16 @@ import useAuthStore from "@/store/auth.store";
 import ProductForm from "./product-form";
 import ProductCard from "./product-card";
 
-export default function ProductAdmin() {
+export default function ProductAdmin()
+{
   const { products, loading, getProducts } = useProductStore();
   const { openModal } = useModalStore();
   const { user } = useAuthStore();
 
   const canModifyProducts = user?.role === "admin" || user?.role === "super_admin";
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     getProducts();
   }, [getProducts]);
 
@@ -146,7 +148,6 @@ export default function ProductAdmin() {
           )}
         </div>
       </div>
-
       <ProductForm />
     </div>
   );

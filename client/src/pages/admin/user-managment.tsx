@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import {
+import
+{
   getRoleDisplayName,
   getAllowedRoles,
   isSuperAdmin,
@@ -8,7 +9,8 @@ import useAuthStore from "../../store/auth.store";
 import type { User, UserRole } from "@/types/auth.types";
 import { userApi } from "@/service/api.auth";
 
-export default function UserManager() {
+export default function UserManager()
+{
   const {
     user: currentUser,
     error,
@@ -21,15 +23,21 @@ export default function UserManager() {
 
   const [initialLoading, setInitialLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     const fetchUsers = async () => {
-      try {
+      try
+      {
         setInitialLoading(true);
         const response = await userApi.getAllUsers();
         setUsers(response.data);
-      } catch (err) {
+      }
+      catch (err)
+      {
         setError(err instanceof Error ? err.message : "Failed to fetch users");
-      } finally {
+      }
+      finally
+      {
         setInitialLoading(false);
       }
     };
@@ -41,11 +49,12 @@ export default function UserManager() {
     userId: string,
     newRole: "client" | "admin"
   ) => {
-    try {
+    try
+    {
       setChangingRole(userId);
+
       await userApi.changeUserRole(userId, newRole);
 
-      // Update local state
       setUsers(
         users?.map((user) =>
           user._id === userId
@@ -53,16 +62,21 @@ export default function UserManager() {
             : (user as User)
         ) ?? []
       );
-    } catch (err) {
+    }
+    catch (err)
+    {
       setError(
         err instanceof Error ? err.message : "Failed to change user role"
       );
-    } finally {
+    }
+    finally
+    {
       setChangingRole("");
     }
   };
 
-  if (initialLoading) {
+  if (initialLoading)
+  {
     return (
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="text-xl text-white/70 flex items-center gap-3">
@@ -76,7 +90,8 @@ export default function UserManager() {
     );
   }
 
-  if (error) {
+  if (error)
+  {
     return (
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="bg-red-500/10 border-2 border-red-500/30 rounded-2xl p-6 max-w-md">
@@ -94,7 +109,8 @@ export default function UserManager() {
     );
   }
 
-  if (!currentUser || !isSuperAdmin(currentUser)) {
+  if (!currentUser || !isSuperAdmin(currentUser))
+  {
     return (
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="bg-red-500/10 border-2 border-red-500/30 rounded-2xl p-8 max-w-md text-center backdrop-blur-sm">
@@ -112,7 +128,6 @@ export default function UserManager() {
 
   return (
     <div className="container mx-auto min-h-screen p-6 md:p-8 max-w-7xl flex flex-col gap-5">
-      {/* Header */}
       <div className="mb-8 flex flex-col gap-2 items-center justify-center">
         <h1 className="text-4xl md:text-5xl font-space-age mb-3 text-indigo-400">
           User Management
@@ -122,7 +137,6 @@ export default function UserManager() {
         </p>
       </div>
 
-      {/* Users Table */}
       <div className="bg-white/5 backdrop-blur-lg rounded-md border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -214,7 +228,6 @@ export default function UserManager() {
         </div>
       </div>
 
-      {/* Info Card */}
       <div className="mt-6 bg-indigo-500/10 backdrop-blur-lg border border-indigo-500/20 rounded-xl p-4">
         <div className="flex items-start gap-3">
           <svg className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">

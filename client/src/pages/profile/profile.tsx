@@ -1,5 +1,5 @@
 import useAuthStore from "@/store/auth.store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { profileSchema, type ProfileSchema } from "./profile.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,8 +12,17 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { register, handleSubmit, formState: { dirtyFields } } = useForm<ProfileSchema>({
+  const { register, handleSubmit, reset, formState: { dirtyFields } } = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      bio: (user?.bio as any) ?? "",
+      avatarUrl: (user as any)?.avatarUrl ?? "",
+      sosialLinks: {
+        twitter: (user as any)?.sosialLinks?.twitter ?? "",
+        facebook: (user as any)?.sosialLinks?.facebook ?? "",
+        instagram: (user as any)?.sosialLinks?.instagram ?? "",
+      }
+    }
   });
 
   const onSubmit = async (data: ProfileSchema) => {
@@ -71,6 +80,20 @@ export default function Profile() {
     logout();
     navigate('/');
   };
+
+  useEffect(() => {
+    if (isEditing) {
+      reset({
+        bio: (user as any)?.bio ?? "",
+        avatarUrl: (user as any)?.avatarUrl ?? "",
+        sosialLinks: {
+          twitter: (user as any)?.sosialLinks?.twitter ?? "",
+          facebook: (user as any)?.sosialLinks?.facebook ?? "",
+          instagram: (user as any)?.sosialLinks?.instagram ?? "",
+        },
+      });
+    }
+  }, [isEditing, user, reset]);
 
   return (
     <div className="min-h-screen p-6 md:p-8 max-w-4xl mx-auto">

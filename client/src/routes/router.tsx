@@ -13,7 +13,7 @@ import ProductAdmin from "@/pages/products/product-admin";
 import ProductPage from "@/pages/products/product-page";
 
 export const Routes = [
-  {
+    {
     element: <MainLayout />,
     children: [
       {

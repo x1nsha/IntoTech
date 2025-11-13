@@ -9,12 +9,12 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path;
   const { user, isAuthenticated, loading } = useAuthStore();
 
-  if (loading) {
+  if (loading)
+  {
     return <Loading />;
   }
 
   const isAdmin = user?.role === "admin" || user?.role === "super_admin";
-
 
   const navLinkClass = (path: string) => `
      py-2 font-medium transition-all duration-200 relative 
@@ -39,7 +39,7 @@ export default function Navbar() {
 
           <ul className="hidden md:flex gap-10 items-center">
             <li>
-              <Link to="/" className={navLinkClass("/")}> 
+              <Link to="/" className={navLinkClass("/")}>
                 Home
               </Link>
             </li>
@@ -58,10 +58,9 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Actions */}
           <div className="flex items-center gap-4">
-            <Link to="/products" className="hidden sm:inline-flex bg-indigo-600 hover:bg-indigo-500 rounded-md px-5 py-3 text-white cursor-pointer rounded-md">
-              Build your setup
+            <Link to="/products?open=add" className="hidden sm:inline-flex bg-indigo-600 hover:bg-indigo-500 rounded-md px-5 py-3 text-white cursor-pointer rounded-md">
+              Add Product
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer rounded-md p-2 hover:bg-white/5 border border-white/10">

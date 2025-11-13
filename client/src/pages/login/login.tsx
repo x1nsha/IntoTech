@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "./login.schema";
 
-export default function Login() {
+export default function Login()
+{
     const {
         register,
         handleSubmit,
@@ -16,27 +17,34 @@ export default function Login() {
     const { login, error, loading, setError, setLoading } = useAuthStore();
     const navigate = useNavigate();
 
-    const onSubmit = async (data: LoginSchema) => {
+    const onSubmit = async (data: LoginSchema) =>
+    {
         setError("");
         setLoading(true);
 
-        try {
+        try
+        {
             await login(data.email, data.password);
             navigate("/profile");
-        } catch (err: unknown) {
+        }
+        catch (err: unknown)
+        {
             console.error("Login error:", err);
             let errorMessage = "Login failed";
 
-            if (err && typeof err === "object" && "response" in err) {
-                const response = (err as { response?: { data?: { message?: string } } })
-                    .response;
+            if (err && typeof err === "object" && "response" in err)
+            {
+                const response = (err as { response?: { data?: { message?: string } } }).response;
                 errorMessage = response?.data?.message || "Login failed";
-            } else if (err instanceof Error) {
+            }
+            else if (err instanceof Error)
+            {
                 errorMessage = err.message;
             }
-
             setError(errorMessage);
-        } finally {
+        }
+        finally
+        {
             setLoading(false);
         }
     };
@@ -44,7 +52,7 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center p-6">
             <div className="w-full max-w-md">
-                <div className="text-center mb-8">
+                <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 mb-4 shadow-2xl shadow-indigo-500/40">
                         <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -132,7 +140,7 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             {loading ? (
                                 <>
