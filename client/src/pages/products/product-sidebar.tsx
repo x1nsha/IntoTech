@@ -27,24 +27,18 @@ export default function ProductSidebar() {
       "routers",
     ];
 
-    // Special route-driven selection for 'my-products'
     if (category === 'my-products' && isAuthenticated) {
       if (selectedCategories.length !== 1 || selectedCategories[0] !== 'my-products') {
         setSelectedCategories(['my-products']);
-        // ensure my products are loaded
         getMyProducts().catch(() => {});
       }
       return;
     }
-
-    // If URL specifies a single valid category, sync to it.
     if (category && allowed.includes(category)) {
       if (selectedCategories.length !== 1 || selectedCategories[0] !== category) {
         setSelectedCategories([category]);
       }
     }
-    // IMPORTANT: Do not clear selectedCategories when URL has no category param,
-    // so multi-select state is preserved locally.
   }, [location.search, isAuthenticated]);
 
   useEffect(() => {
@@ -57,7 +51,6 @@ export default function ProductSidebar() {
     const wasSelected = selectedCategories.includes(category);
     const willSelect = !wasSelected;
 
-    // Compute next selection locally to sync URL correctly, then update store
     let nextSelected: string[] = [];
     if (category === 'my-products') {
       nextSelected = willSelect ? ['my-products'] : [];
@@ -72,7 +65,6 @@ export default function ProductSidebar() {
     toggleCategory(category);
 
     const params = new URLSearchParams(location.search);
-    // Keep URL param only when exactly one non 'my-products' category is selected
     if (nextSelected.includes('my-products')) {
       params.set('category', 'my-products');
     } else if (nextSelected.length === 1) {
@@ -150,7 +142,6 @@ export default function ProductSidebar() {
             )}
           </div>
 
-          {/* Search Dropdown */}
           {showDropdown && searchQuery && (
             <div className="absolute z-50 w-full mt-2 bg-slate-900/95 border border-white/10 rounded-lg shadow-lg max-h-96 overflow-y-auto text-white">
               {products.length > 0 ? (
@@ -193,7 +184,6 @@ export default function ProductSidebar() {
           )}
         </div>
 
-        {/* Categories */}
         <div>
           <h3 className="text-sm font-semibold text-white mb-3">
             Categories

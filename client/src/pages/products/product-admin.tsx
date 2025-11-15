@@ -47,7 +47,7 @@ export default function ProductAdmin()
           {canModifyProducts && (
             <button
               onClick={openModal}
-              className="inline-flex items-center gap-3 px-6 py-4 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/50 group"
+              className="inline-flex items-center gap-3 px-6 py-4 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/50 group cursor-pointer"
             >
               <svg 
                 className="w-6 h-6 transition-transform group-hover:rotate-90" 

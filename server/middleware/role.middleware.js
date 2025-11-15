@@ -7,7 +7,7 @@ const requireRole = (roles) => {
 
       if (!user) return res.status(404).json({ message: "User not found" });
 
-      if (!roles.includes(user.role))  // [ 'admin', 'super_admin']
+      if (!roles.includes(user.role))
         return res
           .status(403)
           .json({ message: "Access denied. Insufficient permissions" });

@@ -54,5 +54,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
-// Export only the Button component; buttonVariants is internal to this file
 export { Button }

@@ -76,7 +76,6 @@ const patchProductHandler = async (req, res) => {
     const existing = await Product.findById(req.params.id);
     if (!existing) return res.status(404).json({ message: "Product not found" });
 
-    // Authorization: owner or admin/super_admin
     const currentUser = await userModel.findById(req.user.userId);
     const isOwner = existing.createdBy?.toString() === req.user.userId;
     const isAdmin = currentUser && ["admin", "super_admin"].includes(currentUser.role);
@@ -102,7 +101,6 @@ const deleteProductHandler = async (req, res) => {
     const existing = await Product.findById(id);
     if (!existing) return res.status(404).json({ message: "Product not found" });
 
-    // Authorization: owner or admin/super_admin
     const currentUser = await userModel.findById(req.user.userId);
     const isOwner = existing.createdBy?.toString() === req.user.userId;
     const isAdmin = currentUser && ["admin", "super_admin"].includes(currentUser.role);
@@ -189,8 +187,7 @@ const sortProductsHandler = async (req, res) => {
 const searchProductsHandler = async (req, res) => {
   try {
     const { search, categories } = req.query;
-    
-    // Build query object with allowed categories only
+
     const allowed = [
       "keyboards",
       "mice",
@@ -202,8 +199,7 @@ const searchProductsHandler = async (req, res) => {
       "routers",
     ];
     let query = { name: { $regex: search, $options: "i" }, category: { $in: allowed } };
-    
-    // Add category filter if categories are provided (still intersect with allowed)
+
     if (categories) {
       const categoryArray = categories.split(',').filter(cat => cat.trim());
       if (categoryArray.length > 0) {
@@ -219,15 +215,12 @@ const searchProductsHandler = async (req, res) => {
   }
 }
 
-// Permanently delete unwanted categories (e.g., watches/clocks)
 const purgeProductsHandler = async (req, res) => {
   try {
     const { category } = req.query;
 
-    // Default categories to purge
     const defaultToPurge = ["watches", "clocks"];
 
-    // Parse requested categories if provided
     let categoriesToPurge = defaultToPurge;
     if (category) {
       categoriesToPurge = String(category)
@@ -236,7 +229,6 @@ const purgeProductsHandler = async (req, res) => {
         .filter(Boolean);
     }
 
-    // Only allow purging of specific categories for safety
     const allowedToPurge = ["watches", "clocks"];
     const finalCategories = categoriesToPurge.filter((c) => allowedToPurge.includes(c));
 

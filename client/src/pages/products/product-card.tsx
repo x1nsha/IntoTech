@@ -10,7 +10,6 @@ export default function ProductCard({ product, onClick, allowAdminControls = fal
   const { user } = useAuthStore();
 
   const isOwner = user?._id && product.createdBy && user._id === product.createdBy;
-  // Admin/super_admin are allowed to modify here only if explicitly enabled by parent (e.g., Product Management)
   const isAdminish = user?.role === "admin" || user?.role === "super_admin";
   const canModifyProduct = isOwner || (allowAdminControls && isAdminish);
   
