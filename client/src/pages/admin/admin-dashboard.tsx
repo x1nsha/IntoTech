@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/auth.store';
 import { isAdmin, isSuperAdmin, getRoleDisplayName } from '../../utils/auth.utils';
 
 export default function AdminDashboard()
 {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   if (!user || !isAdmin(user))
   {
@@ -25,6 +26,15 @@ export default function AdminDashboard()
 
   return (
     <div className="min-h-screen p-6 md:p-8 max-w-7xl mx-auto">
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
           Admin Dashboard

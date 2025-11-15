@@ -1,8 +1,18 @@
 const Product = require("../model/product.model");
+const userModel = require("../model/user.model");
 
 const getProductsHandler = async (req, res) => {
   try {
-    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
     const products = await Product.find({ category: { $in: allowed } });
     res.json({ data: products });
   } catch (error) {
@@ -18,7 +28,21 @@ const postProductHandler = async (req, res) => {
     if (!name || !description || !price || !image || !category)
       return res.status(400).json({ message: "All fields are required" });
 
-    const product = await Product.create({ name, description, price, image, category });
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
+    if (!allowed.includes(category)) {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
+    const product = await Product.create({ name, description, price, image, category, createdBy: req.user.userId });
     res
       .status(201)
       .json({ message: "Product created successfully", data: product });
@@ -35,6 +59,31 @@ const patchProductHandler = async (req, res) => {
     if (!name || !description || !price || !image || !category)
       return res.status(400).json({ message: "All fields are required" });
 
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
+    if (!allowed.includes(category)) {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
+    const existing = await Product.findById(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Product not found" });
+
+    // Authorization: owner or admin/super_admin
+    const currentUser = await userModel.findById(req.user.userId);
+    const isOwner = existing.createdBy?.toString() === req.user.userId;
+    const isAdmin = currentUser && ["admin", "super_admin"].includes(currentUser.role);
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       { name, description, price, image, category },
@@ -50,8 +99,18 @@ const patchProductHandler = async (req, res) => {
 const deleteProductHandler = async (req, res) => {
   try {
     const { id } = req.params;
+    const existing = await Product.findById(id);
+    if (!existing) return res.status(404).json({ message: "Product not found" });
+
+    // Authorization: owner or admin/super_admin
+    const currentUser = await userModel.findById(req.user.userId);
+    const isOwner = existing.createdBy?.toString() === req.user.userId;
+    const isAdmin = currentUser && ["admin", "super_admin"].includes(currentUser.role);
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const product = await Product.findByIdAndDelete(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
     res.json({ message: "Product deleted successfully", data: product });
   } catch (error) {
     console.error("Can't delete product", error);
@@ -64,7 +123,16 @@ const getProductByIdHandler = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) return res.status(404).json({ message: "Product not found" });
-    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
     if (!allowed.includes(product.category)) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -100,7 +168,16 @@ const sortProductsHandler = async (req, res) => {
         sortQuery = { createdAt: -1 };
     }
 
-    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
     const products = await Product.find({ category: { $in: allowed } }).sort(sortQuery);
     res.status(200).json({ data: products });
   } catch (error) {
@@ -114,7 +191,16 @@ const searchProductsHandler = async (req, res) => {
     const { search, categories } = req.query;
     
     // Build query object with allowed categories only
-    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
     let query = { name: { $regex: search, $options: "i" }, category: { $in: allowed } };
     
     // Add category filter if categories are provided (still intersect with allowed)
@@ -171,6 +257,51 @@ const purgeProductsHandler = async (req, res) => {
   }
 }
 
+const getMyProductsHandler = async (req, res) => {
+  try {
+    const { sortBy } = req.query;
+    let sortQuery = {};
+    switch (sortBy) {
+      case "latest":
+        sortQuery = { createdAt: -1 };
+        break;
+      case "price-low-to-high":
+        sortQuery = { price: 1 };
+        break;
+      case "price-high-to-low":
+        sortQuery = { price: -1 };
+        break;
+      case "name-a-to-z":
+        sortQuery = { name: 1 };
+        break;
+      case "name-z-to-a":
+        sortQuery = { name: -1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 };
+    }
+
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
+    const products = await Product.find({
+      createdBy: req.user.userId,
+      category: { $in: allowed },
+    }).sort(sortQuery);
+    res.status(200).json({ data: products });
+  } catch (error) {
+    console.error("Can't get my products", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   getProductsHandler,
   postProductHandler,
@@ -180,4 +311,5 @@ module.exports = {
   sortProductsHandler,
   searchProductsHandler,
   purgeProductsHandler,
+  getMyProductsHandler,
 };

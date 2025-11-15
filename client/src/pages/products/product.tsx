@@ -139,7 +139,8 @@ export default function Products()
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {products.map((product) => (
                   <div key={product._id} className="animate-in fade-in-50">
-                    <ProductCard product={product} onClick={setSelectedProduct} />
+                    {/* Admin/superadmin controls are intentionally disabled on the Shop page for non-owners */}
+                    <ProductCard product={product} onClick={setSelectedProduct} allowAdminControls={false} />
                   </div>
                 ))}
               </div>

@@ -10,16 +10,16 @@ export default function Footer() {
                             IntoTech
                         </Link>
                         <p className="text-white/70 leading-relaxed">
-                            Build your dream setup with curated peripherals keyboards, mice, headphones, monitors, and speakers for play and productivity.
+                            Build your dream setup with curated peripherals keyboards, headphones, mice, monitors, speakers and more!
                         </p>
                     </div>
 
                     <div>
-                        <h3 className="text-sm uppercase tracking-wider text-white/60 mb-4">Shop</h3>
+                        <h3 className="text-sm uppercase tracking-wider text-white/60 mb-4">Popular products</h3>
                         <ul className="space-y-3 text-white/80">
                             <li><Link to="/products?category=keyboards" className="hover:text-indigo-300 transition-colors">Keyboards</Link></li>
-                            <li><Link to="/products?category=mice" className="hover:text-indigo-300 transition-colors">Mice</Link></li>
                             <li><Link to="/products?category=headphones" className="hover:text-indigo-300 transition-colors">Headphones</Link></li>
+                            <li><Link to="/products?category=mice" className="hover:text-indigo-300 transition-colors">Mice</Link></li>
                             <li><Link to="/products?category=monitors" className="hover:text-indigo-300 transition-colors">Monitors</Link></li>
                             <li><Link to="/products?category=speakers" className="hover:text-indigo-300 transition-colors">Speakers</Link></li>
                         </ul>

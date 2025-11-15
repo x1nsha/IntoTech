@@ -4,12 +4,15 @@ import useAuthStore from "@/store/auth.store";
 import type { Product } from "@/types/product.types";
 import { TrashIcon, PencilIcon } from "lucide-react";
 
-export default function ProductCard({ product, onClick }: { product: Product; onClick?: (p: Product) => void }) {
+export default function ProductCard({ product, onClick, allowAdminControls = false }: { product: Product; onClick?: (p: Product) => void; allowAdminControls?: boolean }) {
   const { deleteProduct } = useProductStore();
   const { openModalWithProduct } = useModalStore();
   const { user } = useAuthStore();
 
-  const canModifyProduct = user?.role === "admin" || user?.role === "super_admin";
+  const isOwner = user?._id && product.createdBy && user._id === product.createdBy;
+  // Admin/super_admin are allowed to modify here only if explicitly enabled by parent (e.g., Product Management)
+  const isAdminish = user?.role === "admin" || user?.role === "super_admin";
+  const canModifyProduct = isOwner || (allowAdminControls && isAdminish);
   
   const handleDelete = (e: React.MouseEvent) =>
   {

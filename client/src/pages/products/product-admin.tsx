@@ -1,17 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "@/store/product.store";
 import { useModalStore } from "@/store/modal.store";
 import useAuthStore from "@/store/auth.store";
 import ProductForm from "./product-form";
 import ProductCard from "./product-card";
+import ProductDetailsModal from "./product-details-modal";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductAdmin()
 {
   const { products, loading, getProducts } = useProductStore();
   const { openModal } = useModalStore();
   const { user } = useAuthStore();
-
+  const navigate = useNavigate();
   const canModifyProducts = user?.role === "admin" || user?.role === "super_admin";
+
+  const [selectedProduct, setSelectedProduct] = useState<import("@/types/product.types").Product | null>(null);
 
   useEffect(() =>
   {
@@ -21,6 +25,15 @@ export default function ProductAdmin()
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900/20 to-gray-900">
       <div className="container mx-auto px-4 py-12">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
@@ -142,13 +155,21 @@ export default function ProductAdmin()
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (
-                <ProductCard key={product._id} product={product} />
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  onClick={setSelectedProduct}
+                  allowAdminControls
+                />
               ))}
             </div>
           )}
         </div>
       </div>
       <ProductForm />
+      {selectedProduct && (
+        <ProductDetailsModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      )}
     </div>
   );
 }

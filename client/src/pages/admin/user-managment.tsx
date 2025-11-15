@@ -8,6 +8,7 @@ import
 import useAuthStore from "../../store/auth.store";
 import type { User, UserRole } from "@/types/auth.types";
 import { userApi } from "@/service/api.auth";
+import { useNavigate } from "react-router-dom";
 
 export default function UserManager()
 {
@@ -21,6 +22,7 @@ export default function UserManager()
     setChangingRole,
   } = useAuthStore();
 
+  const navigate = useNavigate();
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() =>
@@ -128,6 +130,15 @@ export default function UserManager()
 
   return (
     <div className="container mx-auto min-h-screen p-6 md:p-8 max-w-7xl flex flex-col gap-5">
+      <button
+        onClick={() => navigate(-1)}
+        className="self-start mb-4 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
       <div className="mb-8 flex flex-col gap-2 items-center justify-center">
         <h1 className="text-4xl md:text-5xl font-space-age mb-3 text-indigo-400">
           User Management

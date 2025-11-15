@@ -3,28 +3,49 @@ import { useProductStore } from "@/store/product.store";
 import { X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import useAuthStore from "@/store/auth.store";
 
 export default function ProductSidebar() {
-  const { toggleCategory, selectedCategories, setSelectedCategories, searchQuery, setSearchQuery, clearSearch, searchProducts, products, applyFilters, allProducts } = useProductStore();
+  const { toggleCategory, selectedCategories, setSelectedCategories, searchQuery, setSearchQuery, clearSearch, searchProducts, products, applyFilters, allProducts, getMyProducts } = useProductStore();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const category = params.get("category");
-    const allowed = ["keyboards", "mice", "headphones", "monitors", "speakers"];
+    const allowed = [
+      "keyboards",
+      "mice",
+      "headphones",
+      "monitors",
+      "speakers",
+      "monitor mount",
+      "microphones",
+      "routers",
+    ];
+
+    // Special route-driven selection for 'my-products'
+    if (category === 'my-products' && isAuthenticated) {
+      if (selectedCategories.length !== 1 || selectedCategories[0] !== 'my-products') {
+        setSelectedCategories(['my-products']);
+        // ensure my products are loaded
+        getMyProducts().catch(() => {});
+      }
+      return;
+    }
+
+    // If URL specifies a single valid category, sync to it.
     if (category && allowed.includes(category)) {
       if (selectedCategories.length !== 1 || selectedCategories[0] !== category) {
         setSelectedCategories([category]);
       }
-    } else {
-      if (selectedCategories.length !== 0) {
-        setSelectedCategories([]);
-      }
     }
-  }, [location.search]);
+    // IMPORTANT: Do not clear selectedCategories when URL has no category param,
+    // so multi-select state is preserved locally.
+  }, [location.search, isAuthenticated]);
 
   useEffect(() => {
     if (selectedCategories.length > 0) {
@@ -33,17 +54,33 @@ export default function ProductSidebar() {
   }, [allProducts]);
   
   const handleCategoryChange = async (category: string) => {
+    const wasSelected = selectedCategories.includes(category);
+    const willSelect = !wasSelected;
+
+    // Compute next selection locally to sync URL correctly, then update store
+    let nextSelected: string[] = [];
+    if (category === 'my-products') {
+      nextSelected = willSelect ? ['my-products'] : [];
+    } else if (selectedCategories.includes('my-products')) {
+      nextSelected = [category];
+    } else {
+      nextSelected = wasSelected
+        ? selectedCategories.filter((c) => c !== category)
+        : [...selectedCategories, category];
+    }
+
     toggleCategory(category);
 
-    const first = selectedCategories.includes(category)
-      ? selectedCategories.filter((c) => c !== category)[0]
-      : [...selectedCategories, category][0];
     const params = new URLSearchParams(location.search);
-    if (first) {
-      params.set("category", first);
+    // Keep URL param only when exactly one non 'my-products' category is selected
+    if (nextSelected.includes('my-products')) {
+      params.set('category', 'my-products');
+    } else if (nextSelected.length === 1) {
+      params.set('category', nextSelected[0]);
     } else {
-      params.delete("category");
+      params.delete('category');
     }
+
     navigate({ pathname: "/products", search: params.toString() }, { replace: true });
 
     if (searchQuery.trim()) {
@@ -162,25 +199,50 @@ export default function ProductSidebar() {
             Categories
           </h3>
           <div className="space-y-2">
-            {[
-              { value: "keyboards", label: "Keyboards" },
-              { value: "mice", label: "Mice" },
-              { value: "headphones", label: "Headphones" },
-              { value: "monitors", label: "Monitors" },
-              { value: "speakers", label: "Speakers" },
-            ].map(({ value, label }) => (
-              <label key={value} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-purple-600 rounded"
-                  name="category"
-                  value={value}
-                  checked={selectedCategories.includes(value)}
-                  onChange={(e) => handleCategoryChange(e.target.value)}
-                />
-                <span className="text-white/80">{label}</span>
-              </label>
-            ))}
+            {(
+              [
+                ...(isAuthenticated ? [{ value: "my-products", label: "My Products" }] : []),
+                { value: "keyboards", label: "Keyboards" },
+                { value: "mice", label: "Mice" },
+                { value: "headphones", label: "Headphones" },
+                { value: "monitors", label: "Monitors" },
+                { value: "speakers", label: "Speakers" },
+                { value: "monitor mount", label: "Monitor mount" },
+                { value: "microphones", label: "Microphones" },
+                { value: "routers", label: "Routers" },
+              ] as { value: string; label: string }[]
+            ).map(({ value, label }) => {
+              const isMy = value === 'my-products';
+              const isChecked = selectedCategories.includes(value);
+              return (
+                <label
+                  key={value}
+                  className={`flex items-center gap-2 cursor-pointer group ${isMy ? 'relative' : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    className={`w-4 h-4 rounded ${isMy ? 'text-indigo-500 focus:ring-indigo-500' : 'text-purple-600'}`}
+                    name="category"
+                    value={value}
+                    checked={isChecked}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
+                  />
+                  <span
+                    className={`text-white/80 ${isMy ? 'font-semibold' : ''}`}
+                  >
+                    {label}
+                  </span>
+                  {isMy && (
+                    <span className={`ml-auto inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${isChecked ? 'bg-linear-to-r from-indigo-500 to-purple-600 border-transparent text-white shadow-md' : 'bg-white/5 border-white/10 text-white/70'}`}>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Mine
+                    </span>
+                  )}
+                </label>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -30,6 +30,13 @@ export default function ProductForm() {
     formState: { errors, isSubmitting },
   } = useForm<ProductFormSchema>({
     resolver: zodResolver(productFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 0,
+      category: undefined,
+      image: "",
+    },
   });
 
   const isEditMode = !!editingProduct;
@@ -84,7 +91,6 @@ export default function ProductForm() {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="sticky top-0 bg-white/5 backdrop-blur-xl border-b border-white/10 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -101,10 +107,7 @@ export default function ProductForm() {
                 {isEditMode ? 'Edit Product' : 'Create New Product'}
               </h2>
             </div>
-            <button
-              onClick={handleCancel}
-              className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center transition-colors text-white/60 hover:text-white"
-            >
+            <button onClick={handleCancel} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center transition-colors text-white/60 hover:text-white cursor-pointer">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
@@ -124,9 +127,6 @@ export default function ProductForm() {
             <div className="flex items-center justify-center gap-3">
               <Link to="/auth/login" className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all hover:-translate-y-0.5">Login</Link>
               <Link to="/auth/register" className="px-5 py-3 rounded-xl border border-white/20 text-white hover:bg-white/10 transition-all hover:-translate-y-0.5">Register</Link>
-            </div>
-            <div className="mt-6">
-              <button onClick={handleCancel} className="text-white/60 hover:text-white transition-colors">Close</button>
             </div>
           </div>
         ) : (
@@ -181,6 +181,7 @@ export default function ProductForm() {
             <Controller
               name="category"
               control={control}
+              defaultValue={editingProduct?.category as ProductFormSchema['category'] | undefined}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
@@ -259,20 +260,14 @@ export default function ProductForm() {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t border-white/10">
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-              className="flex-1 py-3 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white/70 hover:text-white disabled:text-white/40 font-medium rounded-xl border border-white/10 transition-all disabled:cursor-not-allowed"
-            >
+            <button type="button" onClick={handleCancel} disabled={isSubmitting} className="flex-1 py-3 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white/70 hover:text-white disabled:text-white/40 font-medium rounded-xl border border-white/10 transition-all cursor-pointer">
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-3 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/30 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
                 <>

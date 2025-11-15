@@ -1,5 +1,6 @@
 import type { Product } from "@/types/product.types";
 import axios from "axios";
+import type { AxiosRequestHeaders } from "axios";
 
 const API_BASE_URL = "http://localhost:8080/products";
 
@@ -10,11 +11,27 @@ const api = axios.create({
     },
 });
 
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        const headers: AxiosRequestHeaders = (config.headers ?? {}) as AxiosRequestHeaders;
+        headers.Authorization = `Bearer ${token}`;
+        config.headers = headers;
+    }
+    return config;
+});
+
 const productsApi =
     {
     getProducts: async ()=>
     {
         const response = await api.get("/");
+        return response.data;
+    },
+    getMyProducts: async (sortBy?: string)=>
+    {
+        const url = sortBy ? `/mine?sortBy=${encodeURIComponent(sortBy)}` : "/mine";
+        const response = await api.get(url);
         return response.data;
     },
     getProductById: async (id: string)=>

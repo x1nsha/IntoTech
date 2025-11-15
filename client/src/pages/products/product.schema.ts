@@ -1,6 +1,15 @@
 import { z } from "zod";
 
-export const PRODUCT_CATEGORIES = ["keyboards", "mice", "headphones", "monitors", "speakers"] as const;
+export const PRODUCT_CATEGORIES = [
+  "keyboards",
+  "mice",
+  "headphones",
+  "monitors",
+  "speakers",
+  "monitor mount",
+  "microphones",
+  "routers",
+] as const;
 
 export const productFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),

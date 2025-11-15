@@ -38,7 +38,7 @@ export const userApi = {
         const response = await api.get("/users/me");
         return response.data;
     },
-    updateProfile: async (data: { bio?: string, avatarUrl?: string, sosialLinks?: SocialLinks }) =>
+    updateProfile: async (data: { bio?: string, avatarUrl?: string, sosialLinks?: Partial<SocialLinks> }) =>
     {
         const response = await api.patch("/users/me", data);
         return response.data;

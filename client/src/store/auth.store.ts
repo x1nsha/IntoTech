@@ -15,7 +15,7 @@ interface AuthState
     login: (email: string, password: string) => Promise<void>;
     register: (username: string, email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    updateUser: (data: { bio?: string, avatarUrl?: string, sosialLinks?: SocialLinks }) => Promise<void>;
+    updateUser: (data: { bio?: string, avatarUrl?: string, sosialLinks?: Partial<SocialLinks> }) => Promise<void>;
     deleteUser: () => Promise<void>;
     initialize: () => Promise<void>;
     setError: (error: string) => void;
@@ -78,7 +78,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
         localStorage.removeItem("token");
         set({ isAuthenticated: false, user: null, token: null, isActive: false });
      },
-    updateUser: async (data: { bio?: string, avatarUrl?: string, sosialLinks?: SocialLinks }) => { 
+    updateUser: async (data: { bio?: string, avatarUrl?: string, sosialLinks?: Partial<SocialLinks> }) => { 
         set({ loading: true, error: null, isAuthenticated: true, isActive: true });
         try {
             const response = await userApi.updateProfile(data);

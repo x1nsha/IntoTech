@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { profileSchema, type ProfileSchema } from "./profile.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import type { User } from "@/types/auth.types";
 
 export default function Profile() {
   const { user, logout, updateUser, deleteUser, error, loading, setError, setLoading } = useAuthStore();
@@ -15,12 +16,12 @@ export default function Profile() {
   const { register, handleSubmit, reset, formState: { dirtyFields } } = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      bio: (user?.bio as any) ?? "",
-      avatarUrl: (user as any)?.avatarUrl ?? "",
+      bio: user?.bio ?? "",
+      avatarUrl: (user as User | null)?.avatarUrl ?? "",
       sosialLinks: {
-        twitter: (user as any)?.sosialLinks?.twitter ?? "",
-        facebook: (user as any)?.sosialLinks?.facebook ?? "",
-        instagram: (user as any)?.sosialLinks?.instagram ?? "",
+        twitter: user?.sosialLinks?.twitter ?? "",
+        facebook: user?.sosialLinks?.facebook ?? "",
+        instagram: user?.sosialLinks?.instagram ?? "",
       }
     }
   });
@@ -36,7 +37,7 @@ export default function Profile() {
         payload.bio = data.bio ?? "";
       }
       if (dirtyFields?.avatarUrl) {
-        payload.avatarUrl = (data as any).avatarUrl ?? "";
+        payload.avatarUrl = data.avatarUrl ?? "";
       }
       const links: { twitter?: string; facebook?: string; instagram?: string } = {};
       if (dirtyFields?.sosialLinks?.twitter) links.twitter = data.sosialLinks?.twitter ?? "";
@@ -84,12 +85,12 @@ export default function Profile() {
   useEffect(() => {
     if (isEditing) {
       reset({
-        bio: (user as any)?.bio ?? "",
-        avatarUrl: (user as any)?.avatarUrl ?? "",
+        bio: user?.bio ?? "",
+        avatarUrl: (user as User | null)?.avatarUrl ?? "",
         sosialLinks: {
-          twitter: (user as any)?.sosialLinks?.twitter ?? "",
-          facebook: (user as any)?.sosialLinks?.facebook ?? "",
-          instagram: (user as any)?.sosialLinks?.instagram ?? "",
+          twitter: user?.sosialLinks?.twitter ?? "",
+          facebook: user?.sosialLinks?.facebook ?? "",
+          instagram: user?.sosialLinks?.instagram ?? "",
         },
       });
     }
